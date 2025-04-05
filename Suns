@@ -1,0 +1,76 @@
+-- Retro Glitch Visual + Trash Audio Script
+local Lighting = game:GetService("Lighting")
+local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
+local player = Players.LocalPlayer
+
+-- === VISUAL EFFECTS === --
+
+-- Add Blur
+local blur = Instance.new("BlurEffect")
+blur.Size = 24
+blur.Parent = Lighting
+
+-- Add Color Correction (retro tint)
+local colorCorrection = Instance.new("ColorCorrectionEffect")
+colorCorrection.TintColor = Color3.fromRGB(255, 100, 100)
+colorCorrection.Saturation = -0.2
+colorCorrection.Brightness = -0.1
+colorCorrection.Contrast = 0.2
+colorCorrection.Parent = Lighting
+
+-- Pixelated overlay GUI
+local function createRetroPixelOverlay()
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "RetroPixelOverlay"
+	gui.IgnoreGuiInset = true
+	gui.ResetOnSpawn = false
+	gui.Parent = player:WaitForChild("PlayerGui")
+
+	for x = 0, 15 do
+		for y = 0, 9 do
+			local pixel = Instance.new("Frame")
+			pixel.Size = UDim2.new(1/16, 0, 1/10, 0)
+			pixel.Position = UDim2.new(x * 1/16, 0, y * 1/10, 0)
+			pixel.BackgroundColor3 = Color3.fromRGB(
+				math.random(100, 255),
+				math.random(0, 100),
+				math.random(100, 255)
+			)
+			pixel.BorderSizePixel = 0
+			pixel.BackgroundTransparency = 0.3
+			pixel.Parent = gui
+		end
+	end
+
+	-- Animate pixel colors
+	while gui.Parent do
+		for _, pixel in ipairs(gui:GetChildren()) do
+			if pixel:IsA("Frame") then
+				pixel.BackgroundColor3 = Color3.fromRGB(
+					math.random(80, 255),
+					math.random(0, 100),
+					math.random(80, 255)
+				)
+			end
+		end
+		wait(0.08)
+	end
+end
+
+-- === TRASHY AUDIO === --
+
+local function playTrashSound()
+	local sound = Instance.new("Sound")
+	sound.SoundId = "rbxassetid://911882901" -- Replace with your preferred glitch sound
+	sound.Looped = true
+	sound.Volume = 0.4
+	sound.PlaybackSpeed = 1
+	sound.Name = "TrashSound"
+	sound.Parent = SoundService
+	sound:Play()
+end
+
+-- Run both effects
+createRetroPixelOverlay()
+playTrashSound()
